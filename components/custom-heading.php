@@ -20,13 +20,33 @@ class MM_Custom_Heading_Widget extends WP_Widget {
 
 		extract( $args );
 		$title = apply_filters( 'widget_title', $instance[ 'title' ] );
-		$num_badges = $instance['num_badges'];
-		$display_tooltip = $instance['display_tooltip'];
+		$heading_text = $instance['heading_text'];
+		$heading_level = $instance['heading_level'];
+		$margin_bottom = $instance['margin_bottom'];
+		$font_size = $instance['font_size'];
+		$text_transform = $instance['text_transform'];
 
-		$options = get_option( 'wptreehouse_badges') ;
-		$wptreehouse_profile = $options['wptreehouse_profile'];
-	
-		require( 'inc/front-end.php');
+			$styles = array();
+
+			$styles[] = 'margin-bottom: ' . (int)$margin_bottom . 'px;';
+			$styles[] = 'font-size:' . (int)$font_size . 'px;';
+			$styles[] = 'text-transform:' . $text_transform;
+
+			$styles = implode( ' ', $styles );
+			$style = ( '' !== $styles ) ? 'style="' . $styles . '"' : '';
+		
+		
+		$options = get_option( 'mm_custom_heading_widget');
+			
+				$output = printf( '<%s %s>%s</%s>',
+			    $heading_level,
+			    $style,
+			    $heading_text,
+			    $heading_level 
+		    );
+
+			return $output;
+		
 
 	}
 
@@ -35,32 +55,76 @@ class MM_Custom_Heading_Widget extends WP_Widget {
 		
 		$instance = $old_instance;
 		$instance['title'] = strip_tags($new_instance['title']);
-		$instance['num_badges'] = strip_tags($new_instance['num_badges']);
-		$instance['display_tooltip'] = strip_tags($new_instance['display_tooltip']);
+		$instance['heading_text'] = strip_tags($new_instance['heading_text']);
+		$instance['heading_level'] = strip_tags($new_instance['heading_level']);
+		$instance['margin_bottom'] = strip_tags($new_instance['margin_bottom']);
+		$instance['font_size'] = strip_tags($new_instance['font_size']);
+		$instance['text_transform'] = strip_tags($new_instance['text_transform']);
 
 		return $instance;
-
 	}
 
 	function form( $instance ) {
 		// Output admin widget options form
 
 		$title = esc_attr( $instance['title'] );
-		$num_badges = esc_attr( $instance['num_badges'] );
-		$display_tooltip = esc_attr( $instance['display_tooltip'] );
+		$heading_text = esc_attr( $instance['heading_text'] );
+		$heading_level = esc_attr( $instance['heading_level'] );
+		$margin_bottom = esc_attr( $instance['margin_bottom'] );
+		$font_size = esc_attr( $instance['font_size'] );
+		$text_transform = esc_attr( $instance['text_transform'] );
+		
+		$options = get_option( 'mm_custom_heading_widget') ;
 
-		$options = get_option( 'wptreehouse_badges') ;
-		$wptreehouse_profile = $options['wptreehouse_profile'];
+	?>
+		<p>
+			<label>Heading Text</label>
+			<input class="heading-text" name="<?php echo $this->get_field_name('heading_text'); ?>" type="text" value="<?php echo $heading_text;?>" />
+		</p>
 
-		require( 'inc/widget-fields.php' );
+		<p>
+			<label>Heading Level</label>
+				<select name="<?php echo $this->get_field_name('heading_level'); ?>" value = "" >
+				  	<option name="<?php echo $this->get_field_name('heading_level'); ?>" value="h1" <?php if($heading_level== "h1") echo "selected"; ?>>h1</option>
+				  	<option name="<?php echo $this->get_field_name('heading_level'); ?>" value="h2" <?php if($heading_level== "h2") echo "selected"; ?>>h2</option>
+				  	<option name="<?php echo $this->get_field_name('heading_level'); ?>" value="h3" <?php if($heading_level== "h3") echo "selected"; ?>>h3</option>
+				  	<option name="<?php echo $this->get_field_name('heading_level'); ?>" value="h4" <?php if($heading_level== "h4") echo "selected"; ?>>h4</option>
+				  	<option name="<?php echo $this->get_field_name('heading_level'); ?>" value="h5" <?php if($heading_level== "h5") echo "selected"; ?>>h5</option>
+				  	<option name="<?php echo $this->get_field_name('heading_level'); ?>" value="h6" <?php if($heading_level== "h6") echo "selected"; ?>>h6</option>
+				</select>
+
+		</p>
+
+		<p>
+			<label>Margin Bottom</label>
+			<input name="<?php echo $this->get_field_name('margin_bottom'); ?>" type="text" size="2" value="<?php echo $margin_bottom;?>" /><span>px</span>
+
+		</p>
+
+		<p>
+			<label>Font Size</label>
+			<input name="<?php echo $this->get_field_name('font_size'); ?>" type="text" size="2" value="<?php echo $font_size;?>" /><span>px</span>
+
+		</p>
+
+		<p>
+			<label>Text Transform</label>
+			<select name="<?php echo $this->get_field_name('text_transform'); ?>" value = "" >
+			  	<option name="<?php echo $this->get_field_name('text_transform'); ?>" value="none" <?php if($text_transform== "none") echo "selected"; ?>>none</option>
+			  	<option name="<?php echo $this->get_field_name('text_transform'); ?>" value="Uppercase" <?php if($text_transform== "Uppercase") echo "selected"; ?>>Uppercase</option>
+			</select>
+		</p>
+	
+	<?php
+
 	}
 }
 
-function wptreehouse_badges_register_widgets() {
+function mm_custom_heading_register_widgets() {
 	register_widget( 'mm_custom_heading_widget' );
 }
 
-add_action( 'widgets_init', 'wptreehouse_badges_register_widgets' );
+add_action( 'widgets_init', 'mm_custom_heading_register_widgets' );
 
 
 
